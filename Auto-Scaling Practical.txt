@@ -1,0 +1,78 @@
+***
+******
+*********
+************
+****************
+********************
+
+
+Step (1) :- Create one 'Target group'
+
+>> Goto 'Target Group' tab in EC2 dashboard
+>> Select 'Create target group'
+>> On the next page, Choose a target type as 'Instances'
+>> Give the name to the 'Target Group', do not change anything 
+	in any tab. Keep as it is. 
+>> Choose 'Next'
+>> On next page, directly create the 'create target group' without choosing any target/EC2 instance.
+>> Now, Your blank 'Target Group' is Created.
+
+
+Step (2) :- Create one 'Load Balancer'
+
+>> Goto 'Load Balancer' tab in EC2 dashboard.
+>> Select 'Create load balancer'
+>> On the next page, select load balancer type as 'Application load balancer'
+>> On the next page give the name to the 'Application Load Balancer', 
+>> In 'Mappings' tab you need to choose subnets/Available Zones
+>> In 'Security Group', you need to add Security Group with port no. 80
+>> In 'Listeners and routing', Select Target Group as you are already created.
+	Do not change anything in any tab. Keep this as it is. 
+>> Select 'Create Load balancer'
+	
+	
+Step (3) :- Create one 'Launch Templete'
+
+>> Goto 'Launch Templete' tab	
+>> Select  'New Launch Templete'
+>> All process is same as "Creating EC2 instance"
+>> Only in 'Advance Setting', you need to add below script in 'User Data'
+
+right
+#!/bin/bash
+# Use this for your user data (script from top to bottom)
+# install httpd (Linux 2 version)
+yum update -y
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
+
+Step (3) :- Create one 'Auto-Scaling Group'
+
+>> Goto 'Auto-Scaling' Tab in EC2 dashboard
+>> On next page, Give the name to 'Auto-Scaling Group'
+>> Choose 'Launch Templete' as 'ApplicationServer_Linux'
+>> Select 'Next'
+>> In Network tab,select 'Availability Zones and subnets' except -> us-west-2d Bcz 2d don't have t2.micro
+>> Choose 'Next'
+>> In 'Load balancing' tab , Choose 'Attach to an existing load balancer'
+>> In 'Attach to an existing load balancer' tab, You need to select 'Application Load Balancer' 
+	and 'Target Group' as you are already Created.
+>> Do change any configurations, Keep this as it is.
+>> choose 'Next' 
+>> On next page, Select 'Group size'
+	Desired => 2
+	min => 1
+	Max => 2
+>> Choose 'Instance maintenance policy' => 'No Policies'
+>> On next two page click on 'Next', Do not Change ant=y configurations.
+>> on last page click on 'Create auto scaling group'.
+
+
+Now Copy the Load Balancer DNS as 'LBhotstar-118263189.us-west-2.elb.amazonaws.com' and
+Paste it in google Search bar
+
+
+
+
